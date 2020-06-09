@@ -658,7 +658,7 @@ class HTMLTestRunner(Template_mixin):
         """
         :param result:
         :param screen_shot_id_dict: 截图ID字典 -> { "测试类名.测试方法名":['aaa', 'bbb'], "测试类名.测试方法名":['ccc'] }
-        :param ios_device_info_dict: 使用的Android设备信息：name、width、height
+        :param ios_device_info_dict: 使用的iOS设备信息：name、width、height
             ->  { "测试类名.测试方法名": {"device_name": "iPhone8(模拟器)", "device_width": "414", "device_height": "896"},
                   "测试类名.测试方法名": {"device_name": "iPhone7(真机)", "device_width": "540", "device_height": "960"} }
         :return:

@@ -42,26 +42,31 @@ def get_login_accout(current_thread_name_index):
         return "user_3", "passwd_3"
 
 
-def get_app_bundleId(pro_name):
+def get_app_info(pro_name):
     """
-    通过项目名称 获取APP应用的'bundleId'
+    通过项目名称 获取APP信息 （ app ）
     :param pro_name:
     :return:
 
+    【 备 注 】
+    app: -> 已安装的应用 直接用 bundleId
+         -> 未安装的应用 使用.app包 路径
+
     """
     if pro_name == "pro_demo_1":  # 应用宝
-        app_package = "com.apple.Health"
+        desired_app = 'com.apple.Health'
+        # desired_app = '/Users/micllo/Downloads/appium/ios/TestApp.app'
     else:
-        app_package = None
-    return app_package
+        desired_app = None
+    return desired_app
 
 
 def config_ios_device_list():
     """
     配置 iOS 设备信息 列表
-    [ { "device_name": "iPhone8(模拟器)", "wda_port": "8100", "wda_destination": "platform=iOS Simulator,name=iPhone 8" } } ,
-      { "device_name": "iPhone11(模拟器)", "wda_port": "8200", "wda_destination": "platform=iOS Simulator,name=iPhone 11" } }, ]
-      { "device_name": "iPhone7(真机)", "wda_port": "8200", "wda_destination": "id=3cbb25d055753f2305ec70ba6dede3dca5d500bb" } } ]
+    [ { "device_name": "iPhone 8(模拟器)", "wda_port": "8100", "wda_destination": "platform=iOS Simulator,name=iPhone 8" } } ,
+      { "device_name": "iPhone 11(模拟器)", "wda_port": "8200", "wda_destination": "platform=iOS Simulator,name=iPhone 11" } }, ]
+      { "device_name": "iPhone 7(真机)", "wda_port": "8200", "wda_destination": "id=3cbb25d055753f2305ec70ba6dede3dca5d500bb" } } ]
 
     【 备 注 】
     'wda_port'：WDA服务的启动端口（可以通过修改WebDriverAgent项目进行调整）
@@ -72,21 +77,30 @@ def config_ios_device_list():
     ios_device_info_list = []
 
     iphone8 = dict()
-    iphone8["device_name"] = "iPhone8(模拟器)"
+    iphone8["device_name"] = "iPhone 8(模拟器)"
+    iphone8["platform_version"] = "13.4"
+    iphone8["device_udid"] = "647616B3-44E3-4198-8578-E22FFD8EE43D"
     iphone8["wda_port"] = "8100"
     iphone8["wda_destination"] = "platform=iOS Simulator,name=iPhone 8"
+    iphone8["appium_server"] = cfg.APPIUM_SERVER_4723
     ios_device_info_list.append(iphone8)
 
     iphone11 = dict()
-    iphone11["device_name"] = "iPhone11(模拟器)"
+    iphone11["device_name"] = "iPhone 11(模拟器)"
+    iphone11["platform_version"] = "13.4"
+    iphone11["device_udid"] = "5F302EEC-C5AA-489D-924D-45FB91C9C894"
     iphone11["wda_port"] = "8200"
     iphone11["wda_destination"] = "platform=iOS Simulator,name=iPhone 11"
+    iphone11["appium_server"] = cfg.APPIUM_SERVER_4733
     ios_device_info_list.append(iphone11)
 
     iphone7 = dict()
-    iphone7["device_name"] = "iPhone7(真机)"
+    iphone7["device_name"] = "iPhone 7(真机)"
+    iphone7["platform_version"] = "10.3"
+    iphone7["device_udid"] = "3cbb25d055753f2305ec70ba6dede3dca5d500bb"
     iphone7["wda_port"] = "8100"
     iphone7["wda_destination"] = "id=3cbb25d055753f2305ec70ba6dede3dca5d500bb"
+    iphone7["appium_server"] = cfg.APPIUM_SERVER_4733
     ios_device_info_list.append(iphone7)
 
     return ios_device_info_list

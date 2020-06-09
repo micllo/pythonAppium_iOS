@@ -216,12 +216,17 @@ def get_connected_ios_devices_info(pro_name):
     【 获取 已连接的 iOS 设备信息列表 】
      1.通过'SSH'登录'WDA'服务器
      2.获取 配置的 iOS 设备信息列表
-     3.通过 ps aux 命令 查看 WDA服务连接的iOS设备情况
+     3.通过 ps aux 命令 查看 WDA服务 连接的iOS设备情况
      （1）-destination "platform=iOS Simulator,name=iPhone 8"
      （2）-destination "platform=iOS Simulator,name=iPhone 11"
      （3）-destination "id=3cbb25d055753f2305ec70ba6dede3dca5d500bb"
-     4.将'已连接'的设备增加其对应的'thread_index'，并保存入列表
-     5.将'未连接'的设备，发送钉钉通知
+     4.通过 ps aux 命令 查看 appium服务 对应的WDA监听端口情况
+     （1）--port 4723 --webdriveragent-port 8100
+     （2）--port 4733 --webdriveragent-port 8200
+
+     5.判断'-destination'和'--webdriveragent-port'是否都存在：同时满足则视为'已连接'
+     6.将'已连接'的设备增加其对应的'thread_index'，并保存入列表
+     7.将'未连接'的设备，发送钉钉通知
 
      [ { "thread_index": 1, "device_name": "iPhone8(模拟器)", "wda_port": "8100", "wda_destination": "platform=iOS Simulator,name=iPhone 8" } } ,
        { "thread_index": 2, "device_name": "iPhone7(真机)", "wda_port": "8200", "wda_destination": "id=3cbb25d055753f2305ec70ba6dede3dca5d500bb" } } ]
@@ -242,16 +247,25 @@ def get_connected_ios_devices_info(pro_name):
     with settings(host_string="%s@%s:%s" % (cfg.WDA_SERVER_USER, cfg.WDA_SERVER_HOST, cfg.WDA_SERVER_PORT),
                   password=cfg.WDA_SERVER_PASSWD):
         try:
-            cmd_res = run("ps -ef | grep -v \"grep\" | grep WebDriverAgentRunner", warn_only=True)  # 忽略失败的命令,继续执行
-            # 若 iOS 设备对应的 destination 出现在查询结果中则保存入列表
+            wda_cmd_res = run("ps -ef | grep -v \"grep\" | grep WebDriverAgentRunner", warn_only=True)  # 忽略失败的命令,继续执行
+            appium_cmd_res = run("ps -ef | grep -v \"grep\" | grep appium", warn_only=True)
+
+            # 若 iOS 设备对应的 destination 和 webdriveragent-port 都 出现在查询结果中则保存入列表
             for ios_device_dict in ios_device_list:
-                if "-destination " + ios_device_dict["wda_destination"] in str(cmd_res):
+                wda_connect_flag = "-destination " + ios_device_dict["wda_destination"] in str(wda_cmd_res) or False
+                appium_connect_flag = "--webdriveragent-port " + ios_device_dict["wda_port"] in str(appium_cmd_res) or False
+
+                if not wda_connect_flag:
+                    send_DD_for_FXC(title=pro_name, text="#### " + pro_name + " 项目 " + ios_device_dict[
+                        "device_name"] + " 设 备 未 启 动 WDA 监 听 服 务")
+                elif not appium_connect_flag:
+                    send_DD_for_FXC(title=pro_name, text="#### " + pro_name + " 项目 " + ios_device_dict[
+                        "device_name"] + " 设 备 没 有 Appium 服 务 指 定 其 WDA 监 听 端 口")
+                else:
                     device_num += 1
                     connected_ios_device_dict = ios_device_dict
                     connected_ios_device_dict["thread_index"] = device_num
                     connected_ios_device_list.append(connected_ios_device_dict)
-                else:
-                    send_DD_for_FXC(title=pro_name, text="#### " + pro_name + " 项目 " + ios_device_dict["device_name"] + " 设 备 未 连 接 WDA 服 务")
         except Exception as e:
             print(str(e))
             send_DD_for_FXC(title=pro_name, text="#### " + pro_name + " 项目 通过'SSH'登录'WDA'服务器失败，无法获取iOS设备连接情况")

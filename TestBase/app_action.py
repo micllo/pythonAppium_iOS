@@ -5,10 +5,10 @@ from Config import global_var as gv
 import time
 from Tools.mongodb import MongoGridFS
 from Common.test_func import send_DD_for_FXC
-import wda
+from appium import webdriver
 
 
-def get_ios_client(pro_name, current_thread_name_index, connected_ios_device_list):
+def get_ios_driver(pro_name, current_thread_name_index, connected_ios_device_list):
     """
     【 获取'iOS'驱动、设备名称 】
     :param pro_name
@@ -20,110 +20,127 @@ def get_ios_client(pro_name, current_thread_name_index, connected_ios_device_lis
     :return:
 
     【 步 骤 】
-    1.通过'当前线程名索引' 获取已连接设备列表中对应的'Android'设备信息和'Appium'服务
-    2.获取设备驱动
+    1.获取 Appium 服务启动应用所需的能力参数 (指定设备，指定应用)
+    2.通过'当前线程名索引' 获取已连接设备列表中对应的'iOS'设备信息和'Appium'服务
+    3.获取设备驱动
+
     """
+
+    # 获取 Appium 服务启动应用所需的能力参数 (指定设备，指定应用)
+    from Config.pro_config import get_app_info
+    desired_app = get_app_info(pro_name)
+    desired_caps = dict()
+    desired_caps["platformName"] = "IOS"
+    desired_caps["app"] = desired_app
+    # 使用哪个自动化引擎
+    desired_caps["automationName"] = "xcuitest"
 
     # 通过'当前线程名索引' 获取已连接设备列表中对应的'iOS'设备信息
     device_name = None
     wda_port = None
-    for connected_android_devices_dict in connected_ios_device_list:
-        if current_thread_name_index == connected_android_devices_dict["thread_index"]:
-            wda_port = connected_android_devices_dict["wda_port"]
-            device_name = connected_android_devices_dict["device_name"]
+    appium_server = None
+    for connected_ios_devices_dict in connected_ios_device_list:
+        if current_thread_name_index == connected_ios_devices_dict["thread_index"]:
+            desired_caps["deviceName"] = connected_ios_devices_dict["device_name"].split("(")[0]
+            desired_caps["platformVersion"] = connected_ios_devices_dict["platform_version"]
+            desired_caps["udid"] = connected_ios_devices_dict["device_udid"]
+            device_name = connected_ios_devices_dict["device_name"]
+            wda_port = connected_ios_devices_dict["wda_port"]
+            appium_server = connected_ios_devices_dict["appium_server"]
             break
     log.info("\n\n")
     log.info("device_name -> " + device_name)
     log.info("wda_port -> " + wda_port)
+    log.info("appium_server -> " + appium_server)
     log.info("\n\n")
 
-    client = None
+    driver = None
     try:
-        # 连接设备(通过WDA服务在设备的的监听端口)
-        client = wda.Client("http://" + cfg.SERVER_IP + ":" + wda_port)
-
-        # 等待 WDA 服务启动
-        client.wait_ready(timeout=gv.WAIT_WDA_READY)
-
-        # 设置 client 默认的元素定位超时时间 (注：在本框架中作用不大，见 find_ele 方法)
-        # client.implicitly_wait(gv.IMPLICITY_WAIT)
-
-        # 解锁（点亮屏幕）相当于点击了home健
-        client.unlock()
-
+        driver = webdriver.Remote(appium_server, desired_caps)
     except Exception as e:
         log.error(("显示异常：" + str(e)))
         if "Failed to establish a new connection" in str(e):
-            error_msg = pro_name + " 项目 " + device_name + " 设备 启动 WDA 服务 失败"
+            error_msg = "Appium 服务(" + appium_server + ")未启动"
+        elif "Could not find a connected Android device" in str(e):
+            error_msg = "iOS 设备(" + device_name + ")未连接"
+        elif "Failed to launch Appium Settings app" in str(e):
+            error_msg = "Appium Setting 应用启动超时"
         else:
-            error_msg = pro_name + "项目 " + device_name + " 设备 启动 WDA 服务的其他异常情况"
+            error_msg = "启动 Appium 服务的其他异常情况"
         send_DD_for_FXC(title=pro_name, text="#### " + error_msg + "")
         raise Exception(error_msg)
     finally:
-        return client, device_name
+        return driver, device_name
 
 
 class Base(object):
 
     def __init__(self, case_instance):
-        """
-        【 备 注 】 更多的元素定位方式，参考 facebook_wda.py 文件
-
-        """
         self.case_instance = case_instance    # 测试用例的实例对象
-        self.client = case_instance.client    # 操作 iOS 设备
-        self.session = case_instance.session  # 操作 APP 应用
+        self.driver = case_instance.driver
         self.device_name = case_instance.device_name
         self.log = log
 
-    def find_ele(self, **kwargs):
-        ele = self.session(**kwargs)
-        if ele.wait(timeout=gv.IMPLICITY_WAIT, raise_error=True):  # 设置 Session 定位等待时间
-            return ele
-        else:
-            raise Exception("元素定位失败")
+    def find_ele(self, *args):
+        try:
+            self.log.info("通过" + args[0] + "定位，元素是 " + args[1])
+            return self.driver.find_element(*args)
+        except Exception:
+            raise Exception(args[1] + " 元素定位失败！")
+
+    def find_ele_by_text(self, content):
+        """
+        通过text找到元素（唯一）
+        :param content:
+        :return:
+        """
+        try:
+            return self.driver.find_element_by_android_uiautomator('new UiSelector().text("' + content + '")')
+        except Exception:
+            raise Exception("text = \"" + content + "\" 的元素未找到")
+
+    def find_eles_by_text(self, content):
+        """
+        通过text找到元素（多个）
+        :param content:
+        :return:
+        """
+        try:
+            return self.driver.find_elements_by_android_uiautomator('new UiSelector().text("' + content + '")')
+        except Exception:
+            raise Exception("text = \"" + content + "\" 的元素未找到")
 
     def click(self, *args):
         self.find_ele(*args).click()
 
-    def click_exists(self, timeout, *args):
-        """
-        定位的元素若存在，则进行点击操作（设置等待时间）
-        :param timeout: 等待元素超时时间
-        :param args:
-        :return:
-        """
-        self.find_ele(*args).click_exists(timeout)
+    def send_key(self, *args, value):
+        self.find_ele(*args).send_keys(value)
 
+    def js(self, str):
+        self.driver.execute_script(str)
+
+    def url(self):
+        return self.driver.current_url
+
+    def back(self):
+        self.driver.back()
+
+    def forward(self):
+        self.driver.forward()
+
+    def quit(self):
+        self.driver.quit()
+
+    # 判断页面内容是否存在
     def content_is_exist(self, content, time_out):
-        """
-        判断页面内容是否存在
-        （1）若存在：  True
-        （2）若不存在：False
-        :param content:
-        :param time_out:
-        :return:
-        """
         time_init = 1   # 初始化时间
         polling_interval = 1  # 轮询间隔时间
-        while content not in self.session.source():
-        # while not self.session(text=content).exists:
+        while content not in self.driver.page_source:
             time.sleep(polling_interval)
             time_init = time_init + 1
             if time_init >= time_out:
                 return False
         return True
-
-    def content_is_gone(self, content, time_out):
-        """
-        判断页面内容是否消失
-        （1）若消失：True
-        （2）若存在：False
-        :param content:
-        :param time_out:
-        :return:
-        """
-        return self.session(text=content).wait_gone(timeout=time_out)
 
     def screenshot(self, image_name):
         """
@@ -133,7 +150,7 @@ class Base(object):
         【 使 用 case_instance 逻 辑 】
         1.若'Base类的子类实例对象'调用该方法（在 object_page 中使用）：则使用该实例对象本身的 self.case_instance 属性（测试用例实例对象）
         2.若'Base类'调用该方法（在 test_case 中使用）：则使用该 self 测试用例实例对象本身
-        3.由于'Base'类和'测试用例类'都含有'client'属性，所以不影响self.client的使用
+        3.由于'Base'类和'测试用例类'都含有'driver'属性，所以不影响self.driver的使用
         :return:
         """
         # 判断当前的'实例对象'是否是'Base'类型（考虑子类的继承关系）
@@ -141,7 +158,7 @@ class Base(object):
         # 获取当前测试用例的路径 -> ../类名/方法名/
         current_test_path = cfg.SCREENSHOTS_DIR + case_instance.pro_name + "/" + case_instance.class_method_path
         mkdir(current_test_path)
-        self.session.screenshot(current_test_path + image_name)
+        self.driver.get_screenshot_as_file(current_test_path + image_name)
         mgf = MongoGridFS()
         files_id = mgf.upload_file(img_file_full=current_test_path + image_name)
         case_instance.screen_shot_id_list.append(files_id)
@@ -157,8 +174,7 @@ class Base(object):
         is_exist = True
         time_init = 1   # 初始化时间
         polling_interval = 1  # 轮询间隔时间
-        while content not in self.session.source():
-        # while not self.session(text=content).exists:
+        while content not in self.driver.page_source:
             time.sleep(polling_interval)
             time_init = time_init + 1
             if time_init >= gv.POLLING_CONTENT_TIME_OUT:
@@ -174,35 +190,46 @@ class Base(object):
         :param y: 从坐标（从左上角开始）
         :return:
         """
-        self.session.tap(x, y)
+        self.driver.tap([(x, y)])
 
-    def swipe_up(self):
-        """
-        从屏幕'正中间'往'顶部'划动（效果：屏幕往'下'翻动）
-        :return:
-        """
-        self.session.swipe_up()
+    # 获得机器屏幕大小x,y
+    def get_size(self):
+        x = self.driver.get_window_size()['width']
+        y = self.driver.get_window_size()['height']
+        # log.info(x, y)
+        return x, y
 
-    def swipe_down(self):
-        """
-        从屏幕'正中间'往'底部'划（效果：屏幕往'上'翻动）
-        :return:
-        """
-        self.session.swipe_down()
+    # 屏幕向上滑动（效果：屏幕往'下'翻动）
+    def swipe_up(self, t=1000):
+        l = self.get_size()
+        x = int(l[0] * 0.5)  # 固定 x 坐标
+        y1 = int(l[1] * 0.75)  # 起始 y 坐标
+        y2 = int(l[1] * 0.25)  # 终点 y 坐标
+        self.driver.swipe(x, y1, x, y2, t)
 
-    def swipe_left(self):
-        """
-        从屏幕'中间最右侧'往'中间最左侧'划（效果：屏幕往'右'翻动）
-        :return:
-        """
-        self.session.swipe_left()
+    # 屏幕向下滑动（效果：屏幕往'上'翻动）
+    def swipe_down(self, t=1000):
+        l = self.get_size()
+        x = int(l[0] * 0.5)  # 固定 x 坐标
+        y1 = int(l[1] * 0.25)  # 起始 y 坐标
+        y2 = int(l[1] * 0.75)  # 终点 y 坐标
+        self.driver.swipe(x, y1, x, y2, t)
 
-    def swipe_right(self):
-        """
-        从屏幕'中间最左侧'往'中间最右侧'划（效果：屏幕往'左'翻动）
-        :return:
-        """
-        self.session.swipe_right()
+    # 屏幕向左滑动（效果：屏幕往'右'翻动）
+    def swip_left(self, t=1000):
+        l = self.get_size()
+        y = int(l[1] * 0.5)  # 固定 y 坐标
+        x1 = int(l[0] * 0.75)  # 起始 x 坐标
+        x2 = int(l[0] * 0.05)  # 终点 x 坐标
+        self.driver.swipe(x1, y, x2, y, t)
+
+    # 屏幕向右滑动（效果：屏幕往'左'翻动）
+    def swip_right(self, t=1000):
+        l = self.get_size()
+        y = int(l[1] * 0.5)  # 固定 y 坐标
+        x1 = int(l[0] * 0.05)  # 起始 x 坐标
+        x2 = int(l[0] * 0.75)  # 终点 x 坐标
+        self.driver.swipe(x1, y, x2, y, t)
 
 
 if __name__ == "__main__":

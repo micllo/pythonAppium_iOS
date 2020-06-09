@@ -4,7 +4,7 @@ from Common.com_func import log
 from Tools.mongodb import MongodbUtils
 from Env import env_config as cfg
 from Common.test_func import mongo_exception_send_DD
-from TestBase.app_action import get_ios_client
+from TestBase.app_action import get_ios_driver
 from Common.test_func import send_DD_for_FXC
 from Config import global_var as gv
 
@@ -35,10 +35,6 @@ class ParaCase(unittest.TestCase):
     def setUp(self):
         """
         【 每个用例对象执行前，需要进行如下配置 】
-
-        【 备 注 】
-            self.client  : 操作 iOS 设备
-            self.session : 操作 APP 应用
         :return:
         """
         from Config.pro_config import get_login_accout
@@ -46,12 +42,12 @@ class ParaCase(unittest.TestCase):
         self.user, self.passwd = get_login_accout(self.current_thread_name_index)
 
         # 获取'iOS'驱动、设备名称
-        self.client, self.device_name = get_ios_client(self.pro_name, self.current_thread_name_index,
-                                                           self.connected_ios_device_list)
+        self.driver, self.device_name = get_ios_driver(self.pro_name, self.current_thread_name_index,
+                                                       self.connected_ios_device_list)
 
         # 获取设备屏幕分辩率(width、height)，供报告中的截图适用
-        self.device_width = str(self.client.window_size()[0])
-        self.device_height = str(self.client.window_size()[1])
+        self.device_width = str(self.driver.get_window_size()['width'])
+        self.device_height = str(self.driver.get_window_size()['height'])
 
         # 整合设备信息字典(供报告中显示)
         self.device_info = dict()
@@ -60,44 +56,19 @@ class ParaCase(unittest.TestCase):
         self.device_info["device_height"] = self.device_height
         self.log.info("self.device_info -> " + str(self.device_info))
 
-        # 获取APP应用信息
-        from Config.pro_config import get_app_bundleId
-        self.app_bundleId = get_app_bundleId(self.pro_name)
+        # 隐式等待时间
+        self.driver.implicitly_wait(gv.IMPLICITY_WAIT)
 
-        # 通过'iOS'驱动 启动APP应用
-        try:
-            self.session = self.client.session(self.app_bundleId)
-        except Exception as e:
-            log.error(("显示异常：" + str(e)))
-            if "SessionBrokenError" in str(e):
-                error_msg = self.pro_name + " 项目的APP应用没有启动"
-            elif "Read timed out" in str(e):
-                error_msg = self.pro_name + " Session会话超时，可能是应用的bundleId设置有误"
-            else:
-                error_msg = self.pro_name + " 项目启动APP时 出现异常情况"
-            send_DD_for_FXC(title=self.pro_name, text="#### " + error_msg + "")
-            raise Exception(error_msg)
-
-        # 设置 session 默认的元素定位超时时间 (注：在本框架中作用不大，见 find_ele 方法)
-        # self.session.implicitly_wait(gv.IMPLICITY_WAIT)
-
-        # 获取当前APP的信息{"pid": 1281, "bundleId": ""}
-        self.log.info("当前APP信息：" + str(self.client.app_current()))
-
-        # 当前的 bundleId 和 sessinId (会话id)
-        self.log.info("当前 bundleId：" + str(self.session.bundle_id))
-        self.log.info("当前 sessinId：" + str(self.session.id))
+        # 解锁（点亮屏幕）相当于点击了home健
+        self.driver.unlock()
 
     def tearDown(self):
         """
         【 每个用例对象执行后，需要进行如下配置 】
         :return:
         """
-        # 停止APP应用
-        self.session.close()
-
-        # 通过'iOS'驱动 终止APP应用
-        # self.session.app_terminate(self.app_bundleId)
+        # 关闭应用
+        self.driver.quit()
 
     @staticmethod
     def get_online_case_to_suite(pro_name, connected_ios_device_list=[]):

@@ -89,7 +89,7 @@ sudo nginx -s reload
 ########################################################################################################################
 
 
-【 配 置 Openatx/Facebook-wda iOS 环 境 】
+【 配 置 Appium iOS 环 境 】
 
 【 安 装 工 具 】
 1.安装 libimobiledevice：使用本机与苹果iOS设备的服务进行通信的库
@@ -120,6 +120,13 @@ sudo nginx -s reload
  （1）仅针对使用真机的情况
  （2）有些国产iPhone无法通过手动的IP和端口进行访问，需要通过iproxy命令，将手机的端口转发到Mac上
 
+3.启动 Appium 服务（多个）
+  终端命令: node /Applications/Appium.app/Contents/Resources/app/node_modules/appium/build/lib/main.js --port 4723 --webdriveragent-port 8100
+           node /Applications/Appium.app/Contents/Resources/app/node_modules/appium/build/lib/main.js --port 4733 --webdriveragent-port 8200
+  < 备 注 >
+   --port ：指 Appium 服务的监听端口
+   --webdriveragent-port ：指 iOS 设备的 WDA 服务监听端口
+
 
 【 启 动 多 个 WDA 服 务 的 方 法 】
 1.创建两个 WebDriverAgent 项目
@@ -145,6 +152,12 @@ xcodebuild test -project /Users/micllo/Documents/works/GitHub/WDA_iOS/8200/WebDr
 < iPhone 7 真 机 （ WDA 8100 端 口 ）>
 xcodebuild test -project /Users/micllo/Documents/works/GitHub/WDA_iOS/8100/WebDriverAgent/WebDriverAgent.xcodeproj -scheme WebDriverAgentRunner -destination "id=3cbb25d055753f2305ec70ba6dede3dca5d500bb"
 
+
+# 终端启动 Appium 服务命令
+node /Applications/Appium.app/Contents/Resources/app/node_modules/appium/build/lib/main.js --port 4723 --webdriveragent-port 8100
+node /Applications/Appium.app/Contents/Resources/app/node_modules/appium/build/lib/main.js --port 4733 --webdriveragent-port 8200
+
+
 # 打开模拟器应用（ 若模拟器未打开的情况 ）
 open "/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app/"
 
@@ -152,11 +165,15 @@ open "/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app/"
 xcrun simctl list
 xcrun simctl list devices
 
-# 查看启动设备进程
+# 查看 WDA服务 进程
 ps -ef | grep -v "grep" | grep WebDriverAgentRunner
 ps -ef | grep -v "grep" | grep WebDriverAgentRunner | awk '{print $2}' | xargs kill -9
 
-# 真机 端口映射
+# 查看 Appium服务 进程
+ps -ef | grep -v "grep" | grep appium
+ps -ef | grep -v "grep" | grep appium | awk '{print $2}' | xargs kill -9
+
+# 查看 真机 端口映射 进程
 iproxy 8100 8100
 ps -ef | grep -v "grep" | grep iproxy
 ps -ef | grep -v "grep" | grep iproxy | awk '{print $2}' | xargs kill -9
@@ -211,7 +228,7 @@ pip3 install -v flask==0.12 -i http://mirrors.aliyun.com/pypi/simple/ --trusted-
 ########################################################################################################################
 
 
-【 服 务 端 配 置 Openatx/Facebook-wda 环 境 】
+【 服 务 端 配 置 Appium 环 境 】
 
 [ 未 解 决 的 问 题 ]
 'Docker'中无法获取通过'USB'连接的真机设备
@@ -222,6 +239,7 @@ pip3 install -v flask==0.12 -i http://mirrors.aliyun.com/pypi/simple/ --trusted-
 （1）若使用真机，则需要USB连接电脑
 （2）使用'xcodebuild'命令将WDA服务安装入真机或模拟器中并启动端口
 （3）有些真机无法通过IP和端口访问，需要通过'iproxy'命令将设备的端口映射到电脑上
+（4）启动多个 Appium 服务 对应不同的 WDA服务 监听端口
 
 
 ------------------------------------------
@@ -287,7 +305,7 @@ pip3 install -v flask==0.12 -i http://mirrors.aliyun.com/pypi/simple/ --trusted-
 
 
 【 框 架 工 具 】
- Python3 + Openatx/Facebook-wda + unittest + Flask + uWSGI + Nginx + Bootstrap + MongoDB + Docker + Fabric + Gulp
+ Python3 + Appium + unittest + Flask + uWSGI + Nginx + Bootstrap + MongoDB + Docker + Fabric + Gulp
 
 
 【 框 架 结 构 】（ 提高代码的：可读性、重用性、易扩展性 ）
@@ -308,7 +326,7 @@ pip3 install -v flask==0.12 -i http://mirrors.aliyun.com/pypi/simple/ --trusted-
 
 【 功 能 点 】
 
-1.使用 Python3 + Openatx/Facebook-wda + unittest + Bootstrap:
+1.使用 Python3 + Appium + unittest + Bootstrap:
 （1）使用'unittest'作为测试用例框架
 （2）通过动态修改和添加'unittest.TestSuite'类中的方法和属性，实现启用多线程同时执行多条测试用例
 （3）通过修改'HTMLTestRunner'文件并结合'unittest'测试框架，优化了测试报告的展示方式，并提供了每个测试用例的截图显示
@@ -316,7 +334,7 @@ pip3 install -v flask==0.12 -i http://mirrors.aliyun.com/pypi/simple/ --trusted-
 （5）提供日志记录功能：按照日期区分
 （6）提供定时任务：定时删除过期(一周前)的文件：日志、报告、截图文件(mongo数据)，定时执行测试用例
 （7）提供页面展示项目用例，实现用例上下线、批量执行用例、显示报告、用例运行进度等功能
-（8）多线程并发处理方式：先通过'ps aux'命令查看'WebDriverAgentRunner'服务连接的iOS设备情况、再将'已连接'的设备列表数量 作为 并发线程数量
+（8）多线程并发处理方式：???????
 
 2.使用 Flask ：
 （1）提供 执行用例的接口
@@ -345,4 +363,4 @@ pip3 install -v flask==0.12 -i http://mirrors.aliyun.com/pypi/simple/ --trusted-
 （2）编译静态文件，防止浏览器缓存js问题
 （3）实时监听本地调试页面功能
 
-9.使用的工具和服务：XCode 工具、WebDriverAgent 服务 ( WDA 服务 )
+9.使用的工具和服务：XCode 工具、WebDriverAgent 服务 ( WDA 服务 )、Appium 服务

@@ -21,15 +21,19 @@ REPORT_PATH = "/test_report_local/"
 # Mongo 端口
 MONGO_PORT = "27017"
 
+
+############################################# 相 同 的 配 置 #############################################
+
+
 # WDA 服务
 WDA_SERVER_HOST = SERVER_IP
 WDA_SERVER_PORT = "22"
 WDA_SERVER_USER = "micllo"
 WDA_SERVER_PASSWD = "abc123"
 
-
-############################################# 相 同 的 配 置 #############################################
-
+# Appium 服务
+APPIUM_SERVER_4723 = SERVER_IP + ":4723/wd/hub"
+APPIUM_SERVER_4733 = SERVER_IP + ":4733/wd/hub"
 
 # 接口地址( uwsgi )
 API_ADDR = SERVER_IP + ":" + NGINX_PORT + "/" + NGINX_API_PROXY

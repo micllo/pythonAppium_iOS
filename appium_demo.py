@@ -59,6 +59,34 @@ def is_element_exist(driver, content):
     else:
         return False
 
+#
+# desired_caps = {
+#     # 基本
+#     'platformName': 'IOS',
+#     'automationName': 'xcuitest',
+#
+#     # 应用APP
+#     'app': 'com.apple.Health',  # 已存在的应用 直接用 bundleId
+#     # 'app': '/Users/micllo/Downloads/appium/ios/TestApp.app'  #  .app包路径
+#
+#     # 模拟器 8
+#     'platformVersion': '13.4',
+#     'deviceName': 'iPhone 8',
+#     'udid': '647616B3-44E3-4198-8578-E22FFD8EE43D'
+#
+#     # 模拟器 11
+#     # 'platformVersion': '13.4',
+#     # 'deviceName': 'iPhone 11',
+#     # 'udid': '5F302EEC-C5AA-489D-924D-45FB91C9C894'
+#
+#     # 真机
+#     # 'platformVersion': '10.3',
+#     # 'deviceName': 'iPhone 7',
+#     # 'udid': '3cbb25d055753f2305ec70ba6dede3dca5d500bb'
+#
+# }
+# driver = webdriver.Remote('127.0.0.1:4723/wd/hub', desired_caps)
+
 
 desired_caps = {
     # 基本
@@ -69,42 +97,14 @@ desired_caps = {
     'app': 'com.apple.Health',  # 已存在的应用 直接用 bundleId
     # 'app': '/Users/micllo/Downloads/appium/ios/TestApp.app'  #  .app包路径
 
-    # 模拟器 8
-    'platformVersion': '13.4',
-    'deviceName': 'iPhone 8',
-    'udid': '647616B3-44E3-4198-8578-E22FFD8EE43D'
 
     # 模拟器 11
-    # 'platformVersion': '13.4',
-    # 'deviceName': 'iPhone 11',
-    # 'udid': '5F302EEC-C5AA-489D-924D-45FB91C9C894'
-
-    # 真机
-    # 'platformVersion': '10.3',
-    # 'deviceName': 'iPhone 7',
-    # 'udid': '3cbb25d055753f2305ec70ba6dede3dca5d500bb'
+    'platformVersion': '13.4',
+    'deviceName': 'iPhone 11',
+    'udid': '5F302EEC-C5AA-489D-924D-45FB91C9C894'
 
 }
-driver = webdriver.Remote('127.0.0.1:4723/wd/hub', desired_caps)
-
-
-# desired_caps = {
-#     # 基本
-#     'platformName': 'IOS',
-#     'automationName': 'xcuitest',
-#
-#     # 应用APP
-#     'app': 'com.apple.Health',  # 已存在的应用 直接用 bundleId
-#     # 'app': '/Users/micllo/Downloads/appium/ios/TestApp.app'  #  .app包路径
-#
-#
-#     # 模拟器 11
-#     'platformVersion': '13.4',
-#     'deviceName': 'iPhone 11',
-#     'udid': '5F302EEC-C5AA-489D-924D-45FB91C9C894'
-#
-# }
-# driver = webdriver.Remote('127.0.0.1:4728/wd/hub', desired_caps)
+driver = webdriver.Remote('127.0.0.1:4733/wd/hub', desired_caps)
 
 
 driver.implicitly_wait(3)
