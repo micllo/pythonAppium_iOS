@@ -1,0 +1,26 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+.DS_Store
+*.iml
+*.log
+*.pyc
+out
+gen
+Screenshots
+Logs
+Reports
+vassals_local
+venv
+gulpfile.js
+package.json
+package-lock.json
+node_modules
+nohup.out
+tmp_uwsgi_pid.txt
+Build
+*.png
+*.jpg
