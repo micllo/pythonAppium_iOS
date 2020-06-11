@@ -70,9 +70,9 @@ desired_caps = {
     # 'app': '/Users/micllo/Downloads/appium/ios/TestApp.app'  #  .app包路径
 
     # 模拟器 8
-    'platformVersion': '13.4',
-    'deviceName': 'iPhone 8',
-    'udid': '647616B3-44E3-4198-8578-E22FFD8EE43D'
+    # 'platformVersion': '13.4',
+    # 'deviceName': 'iPhone 8',
+    # 'udid': '647616B3-44E3-4198-8578-E22FFD8EE43D'
 
     # 模拟器 11
     # 'platformVersion': '13.4',
@@ -80,9 +80,9 @@ desired_caps = {
     # 'udid': '5F302EEC-C5AA-489D-924D-45FB91C9C894'
 
     # 真机
-    # 'platformVersion': '10.3',
-    # 'deviceName': 'iPhone 7',
-    # 'udid': '3cbb25d055753f2305ec70ba6dede3dca5d500bb'
+    'platformVersion': '10.3',
+    'deviceName': 'iPhone 7',
+    'udid': '3cbb25d055753f2305ec70ba6dede3dca5d500bb'
 
 }
 driver = webdriver.Remote('127.0.0.1:4723/wd/hub', desired_caps)

@@ -40,6 +40,10 @@ class AddPage(Base):
     def add_btn(self):
         return self.find_ele("type == 'XCUIElementTypeButton' AND name == 'Add'")
 
+    # 'Continue'按钮
+    def continue_btn(self):
+        return self.find_ele("type == 'XCUIElementTypeButton' AND name == 'Continue'")
+
     # ======== 真 机 用 例 元 素 ========
 
     # "身体测量" 按钮
@@ -61,6 +65,17 @@ class AddPage(Base):
     """
         【 页 面 功 能 】
     """
+
+    def judge_input_click_tips(self):
+        """
+        判断 当点击输入框后，是否会出现如下提示
+        若出现则点击 'Continue' 按钮
+
+        Speed up your typing by sliding your finger across the letters to compose a word
+        :return:
+        """
+        if self.content_is_exist("Speed up your typing by sliding your finger across", 2.0):
+            self.continue_btn().click()
 
     def iphone7_flow(self):
         """
@@ -90,7 +105,9 @@ class AddPage(Base):
         # '公斤'输入框 输入 65
         wf = self.weight_field()
         wf.click()
-        wf.set_text("65")
+        self.judge_input_click_tips()
+        time.sleep(2)
+        wf.send_keys("65")
         time.sleep(2)
         self.screenshot(image_name="iphone7_5.png")
 
@@ -126,7 +143,8 @@ class AddPage(Base):
             self.log.info("search_input.text : " + search_input.text)
             self.log.info("search_input.location : " + str(search_input.location))  # {'x': 16, 'y': 117}
             search_input.click()
-            time.sleep(1)
+            self.judge_input_click_tips()
+            time.sleep(2)
             search_input.send_keys("Heart")
             time.sleep(2)
             self.screenshot(image_name="heart_66_rate_3.png")
@@ -153,6 +171,8 @@ class AddPage(Base):
             # 输入心率数据
             bpm_input = self.bpm_field()
             bpm_input.click()
+            self.judge_input_click_tips()
+            time.sleep(2)
             bpm_input.send_keys(heart_rate)
             time.sleep(2)
             self.screenshot(image_name="heart_66_rate_6.png")
@@ -185,7 +205,8 @@ class AddPage(Base):
             # 搜索框输入 Heart
             search_input = self.search_field()
             search_input.click()
-            time.sleep(1)
+            self.judge_input_click_tips()
+            time.sleep(2)
             search_input.send_keys("Heart")
             time.sleep(2)
             self.screenshot(image_name="heart_33_rate_3.png")
@@ -202,6 +223,8 @@ class AddPage(Base):
             # 输入心率数据
             bpm_input = self.bpm_field()
             bpm_input.click()
+            self.judge_input_click_tips()
+            time.sleep(2)
             bpm_input.send_keys(heart_rate)
             time.sleep(2)
             self.screenshot(image_name="heart_33_rate_6.png")
@@ -234,7 +257,8 @@ class AddPage(Base):
             # 搜索框输入 Heart
             search_input = self.search_field()
             search_input.click()
-            time.sleep(1)
+            self.judge_input_click_tips()
+            time.sleep(2)
             search_input.send_keys("Heart")
             time.sleep(2)
             self.screenshot(image_name="heart_11_rate_3.png")
@@ -251,6 +275,8 @@ class AddPage(Base):
             # 输入心率数据
             bpm_input = self.bpm_field()
             bpm_input.click()
+            self.judge_input_click_tips()
+            time.sleep(2)
             bpm_input.send_keys(heart_rate)
             time.sleep(2)
             self.screenshot(image_name="heart_11_rate_6.png")

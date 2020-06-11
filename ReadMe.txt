@@ -12,9 +12,8 @@
 （4）get_app_info               通过项目名称 获取APP信息 （ bundleId ）
 （5）config_ios_device_list     配置'iOS'设备信息列表
 
+
 【 未 解 决 的 问 题 】
-1.有时点击输入框后，模拟键盘未自动开启，需要手动点击'continue'后才能显示键盘
-  解决方案：判断'continue'内容是否出现，若出现则添加额外的点击功能
 
 
 【 关于 本地 gulp 部 署 前 的 注 意 事 项 】
@@ -114,14 +113,7 @@ sudo nginx -s reload
  （2）真机必须与电脑通过 USB 一直连接着
  （3）第一次需要使用Xcode进行配置调试，确认是否能正常启动
 
-2.端口映射（将手机的端口映射到MAC上）
- 终端命令：iproxy 8100 8100
- 验证地址：http://localhost:8100/status
-  < 备 注 >
- （1）仅针对使用真机的情况
- （2）有些国产iPhone无法通过手动的IP和端口进行访问，需要通过iproxy命令，将手机的端口转发到Mac上
-
-3.启动 Appium 服务（多个）
+2.启动 Appium 服务（多个）
   终端命令: node /Applications/Appium.app/Contents/Resources/app/node_modules/appium/build/lib/main.js --port 4723 --webdriveragent-port 8100
            node /Applications/Appium.app/Contents/Resources/app/node_modules/appium/build/lib/main.js --port 4733 --webdriveragent-port 8200
   < 备 注 >
@@ -174,13 +166,8 @@ ps -ef | grep -v "grep" | grep WebDriverAgentRunner | awk '{print $2}' | xargs k
 ps -ef | grep -v "grep" | grep appium
 ps -ef | grep -v "grep" | grep appium | awk '{print $2}' | xargs kill -9
 
-# 查看 真机 端口映射 进程
-iproxy 8100 8100
-ps -ef | grep -v "grep" | grep iproxy
-ps -ef | grep -v "grep" | grep iproxy | awk '{print $2}' | xargs kill -9
-
 # 查询 映射情况
-http://localhost:8200/status
+http://localhost:8100/status
 
 
 ########################################################################################################################
@@ -239,8 +226,7 @@ pip3 install -v flask==0.12 -i http://mirrors.aliyun.com/pypi/simple/ --trusted-
 2.在 mac_mini 主机上安装相应工具和服务，并配置iOS设备的连接
 （1）若使用真机，则需要USB连接电脑
 （2）使用'xcodebuild'命令将WDA服务安装入真机或模拟器中并启动端口
-（3）有些真机无法通过IP和端口访问，需要通过'iproxy'命令将设备的端口映射到电脑上
-（4）启动多个 Appium 服务 对应不同的 WDA服务 监听端口
+（3）启动多个 Appium 服务 对应不同的 WDA服务 监听端口（ 目的：使一个Appium服务 绑定 一个WDA服务，即 绑定一个设备 ）
 
 
 ------------------------------------------
@@ -335,7 +321,7 @@ pip3 install -v flask==0.12 -i http://mirrors.aliyun.com/pypi/simple/ --trusted-
 （5）提供日志记录功能：按照日期区分
 （6）提供定时任务：定时删除过期(一周前)的文件：日志、报告、截图文件(mongo数据)，定时执行测试用例
 （7）提供页面展示项目用例，实现用例上下线、批量执行用例、显示报告、用例运行进度等功能
-（8）多线程并发处理方式：???????
+（8）多线程并发处理方式：先通过'ps aux'命令查看'WebDriverAgentRunner'服务连接的iOS设备情况 和 'Appium'服务对应的WDA监听端口情况，再将'已连接'的设备列表数量 作为 并发线程数量
 
 2.使用 Flask ：
 （1）提供 执行用例的接口

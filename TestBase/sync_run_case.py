@@ -170,21 +170,18 @@ def suite_sync_run_case(pro_name, connected_ios_device_list=[]):
 
     """
 
-    # if is_null(connected_ios_device_list):  # 表示当前是'定时任务'
-    #
-    #     # （定时任务）需要判断 是否存在运行中的用例
-    #     if is_exist_start_case(pro_name):
-    #         send_DD_for_FXC(title=pro_name, text="#### '" + pro_name + "' 项目存在<运行中>的用例而未执行测试（定时任务）")
-    #         return "Done"
-    #
-    #     # （定时任务）需要获取 已连接的 iOS 设备信息列表
-    #     connected_ios_device_list = get_connected_ios_devices_info(pro_name)
-    #     if len(connected_ios_device_list) == 0:
-    #         send_DD_for_FXC(title=pro_name, text="#### '" + pro_name + "' 项目 未连接任何 iOS 设备")
-    #         return "Done"
+    if is_null(connected_ios_device_list):  # 表示当前是'定时任务'
 
-    connected_ios_device_list = [{'device_name': 'iPhone 8(模拟器)', 'platform_version': '13.4', 'device_udid': '647616B3-44E3-4198-8578-E22FFD8EE43D', 'wda_port': '8100', 'wda_destination': 'platform=iOS Simulator,name=iPhone 8', 'appium_server': '127.0.0.1:4723/wd/hub', 'thread_index': 1}]
-                                 # {'device_name': 'iPhone 11(模拟器)', 'platform_version': '13.4', 'device_udid': '5F302EEC-C5AA-489D-924D-45FB91C9C894', 'wda_port': '8200', 'wda_destination': 'platform=iOS Simulator,name=iPhone 11', 'appium_server': '127.0.0.1:4733/wd/hub', 'thread_index': 2}]
+        # （定时任务）需要判断 是否存在运行中的用例
+        if is_exist_start_case(pro_name):
+            send_DD_for_FXC(title=pro_name, text="#### '" + pro_name + "' 项目存在<运行中>的用例而未执行测试（定时任务）")
+            return "Done"
+
+        # （定时任务）需要获取 已连接的 iOS 设备信息列表
+        connected_ios_device_list = get_connected_ios_devices_info(pro_name)
+        if len(connected_ios_device_list) == 0:
+            send_DD_for_FXC(title=pro_name, text="#### '" + pro_name + "' 项目 未连接任何 iOS 设备")
+            return "Done"
 
     # '已连接设备的' 列表数量 作为 线程数量
     log.info("线程数量 ： " + str(len(connected_ios_device_list)))

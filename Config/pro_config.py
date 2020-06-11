@@ -84,6 +84,15 @@ def config_ios_device_list():
     iphone8["appium_server"] = cfg.APPIUM_SERVER_4723
     ios_device_info_list.append(iphone8)
 
+    iphone7 = dict()
+    iphone7["device_name"] = "iPhone 7(真机)"
+    iphone7["platform_version"] = "10.3"
+    iphone7["device_udid"] = "3cbb25d055753f2305ec70ba6dede3dca5d500bb"
+    iphone7["wda_port"] = "8100"
+    iphone7["wda_destination"] = "id=3cbb25d055753f2305ec70ba6dede3dca5d500bb"
+    iphone7["appium_server"] = cfg.APPIUM_SERVER_4723
+    ios_device_info_list.append(iphone7)
+
     iphone11 = dict()
     iphone11["device_name"] = "iPhone 11(模拟器)"
     iphone11["platform_version"] = "13.4"
@@ -93,13 +102,5 @@ def config_ios_device_list():
     iphone11["appium_server"] = cfg.APPIUM_SERVER_4733
     ios_device_info_list.append(iphone11)
 
-    iphone7 = dict()
-    iphone7["device_name"] = "iPhone 7(真机)"
-    iphone7["platform_version"] = "10.3"
-    iphone7["device_udid"] = "3cbb25d055753f2305ec70ba6dede3dca5d500bb"
-    iphone7["wda_port"] = "8100"
-    iphone7["wda_destination"] = "id=3cbb25d055753f2305ec70ba6dede3dca5d500bb"
-    iphone7["appium_server"] = cfg.APPIUM_SERVER_4733
-    ios_device_info_list.append(iphone7)
 
     return ios_device_info_list
