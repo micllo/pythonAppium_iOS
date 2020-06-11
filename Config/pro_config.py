@@ -64,9 +64,8 @@ def get_app_info(pro_name):
 def config_ios_device_list():
     """
     配置 iOS 设备信息 列表
-    [ { "device_name": "iPhone 8(模拟器)", "wda_port": "8100", "wda_destination": "platform=iOS Simulator,name=iPhone 8" } } ,
-      { "device_name": "iPhone 11(模拟器)", "wda_port": "8200", "wda_destination": "platform=iOS Simulator,name=iPhone 11" } }, ]
-      { "device_name": "iPhone 7(真机)", "wda_port": "8200", "wda_destination": "id=3cbb25d055753f2305ec70ba6dede3dca5d500bb" } } ]
+    [ { "device_name":"iPhone 8(模拟器)","wda_port":"8100","wda_destination":"name=iPhone 8","appium_server","http://xxx:4723/wd/hub","platform_version":"","device_udid":"" } } ,
+      { "device_name":"iPhone 7(真机)",  "wda_port":"8200","wda_destination":"id=xxxxxxxxx", "appium_server","http://xxx:4733/wd/hub","platform_version":"","device_udid":"" } } ]
 
     【 备 注 】
     'wda_port'：WDA服务的启动端口（可以通过修改WebDriverAgent项目进行调整）

@@ -14,9 +14,8 @@ def get_ios_driver(pro_name, current_thread_name_index, connected_ios_device_lis
     :param pro_name
     :param current_thread_name_index: 当前线程名字的索引
     :param connected_ios_device_list: 已连接设备信息列表
-    [ { "thread_index": 1, "device_name": "iPhone8(模拟器)", "wda_port": "8100", "wda_destination": "platform=iOS Simulator,name=iPhone 8" } } ,
-      { "thread_index": 2, "device_name": "iPhone11(模拟器)", "wda_port": "8200", "wda_destination": "platform=iOS Simulator,name=iPhone 11" } }, ]
-      { "thread_index": 2, "device_name": "iPhone7(真机)", "wda_port": "8200", "wda_destination": "id=3cbb25d055753f2305ec70ba6dede3dca5d500bb" } } ]
+    [ { "thread_index":1,"device_name":"iPhone 8(模拟器)","wda_port":"8100","wda_destination":"name=iPhone 8","appium_server","http://xxx:4723/wd/hub","platform_version":"","device_udid":"" } } ,
+      { "thread_index":2,"device_name":"iPhone 7(真机)",  "wda_port":"8200","wda_destination":"id=xxxxxxxxx", "appium_server","http://xxx:4733/wd/hub","platform_version":"","device_udid":"" } } ]
     :return:
 
     【 步 骤 】
@@ -60,13 +59,15 @@ def get_ios_driver(pro_name, current_thread_name_index, connected_ios_device_lis
     except Exception as e:
         log.error(("显示异常：" + str(e)))
         if "Failed to establish a new connection" in str(e):
-            error_msg = "Appium 服务(" + appium_server + ")未启动"
-        elif "Could not find a connected Android device" in str(e):
-            error_msg = "iOS 设备(" + device_name + ")未连接"
+            error_msg = pro_name + " 项目 Appium 服务(" + appium_server + ") 未 启 动 "
+        elif "Unable to launch WebDriverAgent because of xcodebuild failure" in str(e):
+            error_msg = pro_name + " 项目 " + device_name + " 设备 启动 WDA 服务 失败"
+        elif "App with bundle identifier" in str(e):
+            error_msg = pro_name + " 项目 " + "应 用 的 bundleId 设 置 有 误"
         elif "Failed to launch Appium Settings app" in str(e):
-            error_msg = "Appium Setting 应用启动超时"
+            error_msg = pro_name + " 项目 " + "Appium Setting 应用启动超时"
         else:
-            error_msg = "启动 Appium 服务的其他异常情况"
+            error_msg = pro_name + " 项目 " + "启动 Appium 服务的其他异常情况"
         send_DD_for_FXC(title=pro_name, text="#### " + error_msg + "")
         raise Exception(error_msg)
     finally:
@@ -83,10 +84,9 @@ class Base(object):
 
     def find_ele(self, *args):
         try:
-            self.log.info("通过" + args[0] + "定位，元素是 " + args[1])
-            return self.driver.find_element(*args)
+            return self.driver.find_element_by_ios_predicate(*args)
         except Exception:
-            raise Exception(args[1] + " 元素定位失败！")
+            raise Exception("元素定位失败！")
 
     def find_ele_by_text(self, content):
         """

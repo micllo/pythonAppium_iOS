@@ -228,8 +228,8 @@ def get_connected_ios_devices_info(pro_name):
      6.将'已连接'的设备增加其对应的'thread_index'，并保存入列表
      7.将'未连接'的设备，发送钉钉通知
 
-     [ { "thread_index": 1, "device_name": "iPhone8(模拟器)", "wda_port": "8100", "wda_destination": "platform=iOS Simulator,name=iPhone 8" } } ,
-       { "thread_index": 2, "device_name": "iPhone7(真机)", "wda_port": "8200", "wda_destination": "id=3cbb25d055753f2305ec70ba6dede3dca5d500bb" } } ]
+    [ { "thread_index":1,"device_name":"iPhone 8(模拟器)","wda_port":"8100","wda_destination":"name=iPhone 8","appium_server","http://xxx:4723/wd/hub","platform_version":"","device_udid":"" } } ,
+      { "thread_index":2,"device_name":"iPhone 7(真机)",  "wda_port":"8200","wda_destination":"id=xxxxxxxxx", "appium_server","http://xxx:4733/wd/hub","platform_version":"","device_udid":"" } } ]
 
      :return: 已连接设备信息列表
 
@@ -249,18 +249,12 @@ def get_connected_ios_devices_info(pro_name):
         try:
             wda_cmd_res = run("ps -ef | grep -v \"grep\" | grep WebDriverAgentRunner", warn_only=True)  # 忽略失败的命令,继续执行
             appium_cmd_res = run("ps -ef | grep -v \"grep\" | grep appium", warn_only=True)
-
             # 若 iOS 设备对应的 destination 和 webdriveragent-port 都 出现在查询结果中则保存入列表
             for ios_device_dict in ios_device_list:
-                wda_connect_flag = "-destination " + ios_device_dict["wda_destination"] in str(wda_cmd_res) or False
-                appium_connect_flag = "--webdriveragent-port " + ios_device_dict["wda_port"] in str(appium_cmd_res) or False
-
-                if not wda_connect_flag:
-                    send_DD_for_FXC(title=pro_name, text="#### " + pro_name + " 项目 " + ios_device_dict[
-                        "device_name"] + " 设 备 未 启 动 WDA 监 听 服 务")
-                elif not appium_connect_flag:
-                    send_DD_for_FXC(title=pro_name, text="#### " + pro_name + " 项目 " + ios_device_dict[
-                        "device_name"] + " 设 备 没 有 Appium 服 务 指 定 其 WDA 监 听 端 口")
+                if "-destination " + ios_device_dict["wda_destination"] not in str(wda_cmd_res):
+                    send_DD_for_FXC(title=pro_name, text="#### " + pro_name + " 项目 " + ios_device_dict["device_name"] + " 设 备 未 启 动 WDA 监 听 服 务")
+                elif "--webdriveragent-port " + ios_device_dict["wda_port"] not in str(appium_cmd_res):
+                    send_DD_for_FXC(title=pro_name, text="#### " + pro_name + " 项目 " + ios_device_dict["device_name"] + " 设 备 没 有 Appium 服 务 指 定 其 WDA 监 听 端 口")
                 else:
                     device_num += 1
                     connected_ios_device_dict = ios_device_dict
@@ -281,4 +275,3 @@ if __name__ == "__main__":
     # stop_case_run_status("pro_demo_1", "test_demo_01")
 
     print(get_connected_ios_devices_info("pro_demo_1"))
-

@@ -59,34 +59,6 @@ def is_element_exist(driver, content):
     else:
         return False
 
-#
-# desired_caps = {
-#     # 基本
-#     'platformName': 'IOS',
-#     'automationName': 'xcuitest',
-#
-#     # 应用APP
-#     'app': 'com.apple.Health',  # 已存在的应用 直接用 bundleId
-#     # 'app': '/Users/micllo/Downloads/appium/ios/TestApp.app'  #  .app包路径
-#
-#     # 模拟器 8
-#     'platformVersion': '13.4',
-#     'deviceName': 'iPhone 8',
-#     'udid': '647616B3-44E3-4198-8578-E22FFD8EE43D'
-#
-#     # 模拟器 11
-#     # 'platformVersion': '13.4',
-#     # 'deviceName': 'iPhone 11',
-#     # 'udid': '5F302EEC-C5AA-489D-924D-45FB91C9C894'
-#
-#     # 真机
-#     # 'platformVersion': '10.3',
-#     # 'deviceName': 'iPhone 7',
-#     # 'udid': '3cbb25d055753f2305ec70ba6dede3dca5d500bb'
-#
-# }
-# driver = webdriver.Remote('127.0.0.1:4723/wd/hub', desired_caps)
-
 
 desired_caps = {
     # 基本
@@ -97,14 +69,42 @@ desired_caps = {
     'app': 'com.apple.Health',  # 已存在的应用 直接用 bundleId
     # 'app': '/Users/micllo/Downloads/appium/ios/TestApp.app'  #  .app包路径
 
+    # 模拟器 8
+    'platformVersion': '13.4',
+    'deviceName': 'iPhone 8',
+    'udid': '647616B3-44E3-4198-8578-E22FFD8EE43D'
 
     # 模拟器 11
-    'platformVersion': '13.4',
-    'deviceName': 'iPhone 11',
-    'udid': '5F302EEC-C5AA-489D-924D-45FB91C9C894'
+    # 'platformVersion': '13.4',
+    # 'deviceName': 'iPhone 11',
+    # 'udid': '5F302EEC-C5AA-489D-924D-45FB91C9C894'
+
+    # 真机
+    # 'platformVersion': '10.3',
+    # 'deviceName': 'iPhone 7',
+    # 'udid': '3cbb25d055753f2305ec70ba6dede3dca5d500bb'
 
 }
-driver = webdriver.Remote('127.0.0.1:4733/wd/hub', desired_caps)
+driver = webdriver.Remote('127.0.0.1:4723/wd/hub', desired_caps)
+
+
+# desired_caps = {
+#     # 基本
+#     'platformName': 'IOS',
+#     'automationName': 'xcuitest',
+#
+#     # 应用APP
+#     'app': 'com.apple.Health',  # 已存在的应用 直接用 bundleId
+#     # 'app': '/Users/micllo/Downloads/appium/ios/TestApp.app'  #  .app包路径
+#
+#
+#     # 模拟器 11
+#     'platformVersion': '13.4',
+#     'deviceName': 'iPhone 11',
+#     'udid': '5F302EEC-C5AA-489D-924D-45FB91C9C894'
+#
+# }
+# driver = webdriver.Remote('127.0.0.1:4733/wd/hub', desired_caps)
 
 
 driver.implicitly_wait(3)
@@ -119,25 +119,25 @@ driver.tap([(315, 846)])  # 触摸点击
 time.sleep(2)
 
 # 3.输入框搜索 Heart
-# search_input = driver.find_element_by_xpath('//XCUIElementTypeSearchField[@name="Search"]')
-search_input = driver.find_element_by_name("Search")
+search_input = driver.find_element(By.XPATH, "//XCUIElementTypeSearchField[@name=\"Search\"]")
+# search_input = driver.find_element_by_name("Search")
 search_input.click()
 time.sleep(1)
 search_input.send_keys("Heart")
 time.sleep(2)
 
-# 4.等待"Nutrition"内容消失
-res1 = is_element_exist(driver, "Nutrition")
-print("内容 Nutrition 是否存在: " + str(res1))
-time.sleep(2)
+# # 4.等待"Nutrition"内容消失
+# res1 = is_element_exist(driver, "Nutrition")
+# print("内容 Nutrition 是否存在: " + str(res1))
+# time.sleep(2)
+#
+# # 5.判断是否存在"Data"内容
+# res2 = is_element_exist(driver, "Data")
+# print("内容 Data 是否存在: " + str(res2))
+# time.sleep(2)
 
-# 5.判断是否存在"Data"内容
-res2 = is_element_exist(driver, "Data")
-print("内容 Data 是否存在: " + str(res2))
-time.sleep(2)
-
-# 6.点击"Heart Rate"进入
-driver.find_element_by_xpath('(//XCUIElementTypeOther[@name="feeditem_identifier"])[1]/XCUIElementTypeButton').click()
+# 6.点击"Heart Rate"进入( 模糊匹配 )
+driver.find_element_by_ios_predicate("type == 'XCUIElementTypeCell' AND name CONTAINS 'BPM'").click()
 time.sleep(2)
 
 # 7.点击"Add Data"
@@ -164,17 +164,3 @@ driver.quit()
 # 截屏
 # driver.get_screenshot_as_file("test1.png")
 
-
-#
-# 2.使用 appium desktop 时
-#     node /Applications/Appium.app/Contents/Resources/app/node_modules/appium/build/lib/main.js --port 4723 --webdriveragent-port 8100
-#     node /Applications/Appium.app/Contents/Resources/app/node_modules/appium/build/lib/main.js --port 4728 --webdriveragent-port 8200
-#     --port ：指 Appium 服务的监听端口
-#     --bootstrap-port ：指 Android 设备的监听端口
-#
-# 3.查看 appium server 进程 PID
-#     ps -ef | grep -v "grep" | grep appium
-
-
-# // 查看WDA启动设备的进程
-# // ps -ef | grep -v "grep" | grep WebDriverAgentRunner

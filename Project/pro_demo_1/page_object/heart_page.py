@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from TestBase.app_action import Base
 import time
+from selenium.webdriver.common.by import By
 
 
 class AddPage(Base):
@@ -17,53 +18,45 @@ class AddPage(Base):
 
     # 'Browse'图标
     def browser_cron(self):
-        return self.find_ele(xpath='//XCUIElementTypeButton[@name="Browse"]')
-        # return self.find_ele(name='Browse')
-        # return self.find_ele(nameContains='Bro')  # 匹配name文本包含的内容
+        return self.find_ele("type == 'XCUIElementTypeButton' AND name == 'Browse'")
 
     # 搜索文本框
     def search_field(self):
-        return self.find_ele(xpath='//XCUIElementTypeSearchField[@name="Search"]')
-        # return self.find_ele(label="Search")
-        # return self.find_ele(name="Search")
+        return self.find_ele("type == 'XCUIElementTypeSearchField'")
 
     # "心率"tab
     def heart_rate_tab(self):
-        return self.find_ele(nameContains="BPM")
+        return self.find_ele("type == 'XCUIElementTypeCell' AND name CONTAINS 'BPM'")  # 模糊匹配 'BPM'
 
     # '添加数据'按钮
     def add_data_btn(self):
-        return self.find_ele(xpath='//XCUIElementTypeButton[@name="Add Data"]')
-        # return self.find_ele(xpath='//NavigationBar/Button[2]')
-        # return self.find_ele(name="Add Data")
+        return self.find_ele("type == 'XCUIElementTypeButton' AND name == 'Add Data'")
 
     # '心率'输入框
     def bpm_field(self):
-        # return self.find_ele(xpath='//XCUIElementTypeTextField[@name="BPM"]')
-        return self.find_ele(label="BPM")
+        return self.find_ele("type == 'XCUIElementTypeTextField' AND name CONTAINS 'BPM'")
 
     # '添加'按钮
     def add_btn(self):
-        # return self.find_ele(xpath='//XCUIElementTypeButton[@name="Add"]')
-        return self.find_ele(label="Add")
+        return self.find_ele("type == 'XCUIElementTypeButton' AND name == 'Add'")
 
     # ======== 真 机 用 例 元 素 ========
 
     # "身体测量" 按钮
     def body_check_cron(self):
-        return self.find_ele(name='身体测量')
+        return self.find_ele("name == '身体测量'")
 
     # "体重" 按钮
     def weight_cron(self):
-        return self.find_ele(name='体重')
+        return self.find_ele("name == '体重'")
 
     # "添加" 按钮
     def add_cron(self):
-        return self.find_ele(name='添加')
+        return self.find_ele("name == '添加'")
 
     # "公斤" 输入框
     def weight_field(self):
-        return self.find_ele(name='公斤')
+        return self.find_ele("name == '公斤'")
 
     """
         【 页 面 功 能 】
@@ -130,18 +123,17 @@ class AddPage(Base):
 
             # 搜索框输入 Heart
             search_input = self.search_field()
-            self.log.info("search_input.name : " + str(search_input.name))
-            self.log.info("search_input.bounds.width : " + str(search_input.bounds.width))
-            self.log.info("search_input.bounds.height : " + str(search_input.bounds.height))
-            search_input.click_exists(timeout=3.0)
+            self.log.info("search_input.text : " + search_input.text)
+            self.log.info("search_input.location : " + str(search_input.location))  # {'x': 16, 'y': 117}
+            search_input.click()
             time.sleep(1)
-            search_input.set_text("Heart")
+            search_input.send_keys("Heart")
             time.sleep(2)
             self.screenshot(image_name="heart_66_rate_3.png")
 
-            # 判断"Nutrition"内容是否消失
-            is_gone = self.content_is_gone("Nutrition", 4.0)
-            self.log.info("内容 Nutrition 是否消失: " + str(is_gone))
+            # 判断"Nutrition"内容是否存在
+            is_not_exist = self.content_is_exist("Nutrition", 4.0)
+            self.log.info("内容 Nutrition 是否存在: " + str(is_not_exist))
             time.sleep(2)
 
             # 判断"Heart Rate"内容是否存在
@@ -161,7 +153,7 @@ class AddPage(Base):
             # 输入心率数据
             bpm_input = self.bpm_field()
             bpm_input.click()
-            bpm_input.set_text(heart_rate)
+            bpm_input.send_keys(heart_rate)
             time.sleep(2)
             self.screenshot(image_name="heart_66_rate_6.png")
 
@@ -192,9 +184,9 @@ class AddPage(Base):
 
             # 搜索框输入 Heart
             search_input = self.search_field()
-            search_input.click_exists(timeout=3.0)
+            search_input.click()
             time.sleep(1)
-            search_input.set_text("Heart")
+            search_input.send_keys("Heart")
             time.sleep(2)
             self.screenshot(image_name="heart_33_rate_3.png")
 
@@ -210,7 +202,7 @@ class AddPage(Base):
             # 输入心率数据
             bpm_input = self.bpm_field()
             bpm_input.click()
-            bpm_input.set_text(heart_rate)
+            bpm_input.send_keys(heart_rate)
             time.sleep(2)
             self.screenshot(image_name="heart_33_rate_6.png")
 
@@ -241,9 +233,9 @@ class AddPage(Base):
 
             # 搜索框输入 Heart
             search_input = self.search_field()
-            search_input.click_exists(timeout=3.0)
+            search_input.click()
             time.sleep(1)
-            search_input.set_text("Heart")
+            search_input.send_keys("Heart")
             time.sleep(2)
             self.screenshot(image_name="heart_11_rate_3.png")
 
@@ -259,7 +251,7 @@ class AddPage(Base):
             # 输入心率数据
             bpm_input = self.bpm_field()
             bpm_input.click()
-            bpm_input.set_text(heart_rate)
+            bpm_input.send_keys(heart_rate)
             time.sleep(2)
             self.screenshot(image_name="heart_11_rate_6.png")
 

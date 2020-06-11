@@ -162,26 +162,29 @@ def suite_sync_run_case(pro_name, connected_ios_device_list=[]):
         【 并 发 线 程 数 逻 辑 】
         1.通过 ps aux 命令 查看 WDA服务连接的iOS设备情况
         2.将'已连接'的设备列表数量 作为 并发线程数量
-         [ { "thread_index": 1, "device_name": "iPhone8(模拟器)", "wda_port": "8100", "wda_destination": "platform=iOS Simulator,name=iPhone 8" } } ,
-           { "thread_index": 2, "device_name": "iPhone7(真机)", "wda_port": "8200", "wda_destination": "id=3cbb25d055753f2305ec70ba6dede3dca5d500bb" } } ]
+        [ { "thread_index":1,"device_name":"iPhone 8(模拟器)","wda_port":"8100","wda_destination":"name=iPhone 8","appium_server","http://xxx:4723/wd/hub","platform_version":"","device_udid":"" } } ,
+          { "thread_index":2,"device_name":"iPhone 7(真机)",  "wda_port":"8200","wda_destination":"id=xxxxxxxxx", "appium_server","http://xxx:4733/wd/hub","platform_version":"","device_udid":"" } } ]
 
         【 每 个 用 例 使 用 iOS 设 备 逻 辑 】
         通过'当前线程名索引' 获取已连接设备列表中对应的'iOS'设备信息
 
     """
 
-    if is_null(connected_ios_device_list):  # 表示当前是'定时任务'
+    # if is_null(connected_ios_device_list):  # 表示当前是'定时任务'
+    #
+    #     # （定时任务）需要判断 是否存在运行中的用例
+    #     if is_exist_start_case(pro_name):
+    #         send_DD_for_FXC(title=pro_name, text="#### '" + pro_name + "' 项目存在<运行中>的用例而未执行测试（定时任务）")
+    #         return "Done"
+    #
+    #     # （定时任务）需要获取 已连接的 iOS 设备信息列表
+    #     connected_ios_device_list = get_connected_ios_devices_info(pro_name)
+    #     if len(connected_ios_device_list) == 0:
+    #         send_DD_for_FXC(title=pro_name, text="#### '" + pro_name + "' 项目 未连接任何 iOS 设备")
+    #         return "Done"
 
-        # （定时任务）需要判断 是否存在运行中的用例
-        if is_exist_start_case(pro_name):
-            send_DD_for_FXC(title=pro_name, text="#### '" + pro_name + "' 项目存在<运行中>的用例而未执行测试（定时任务）")
-            return "Done"
-
-        # （定时任务）需要获取 已连接的 iOS 设备信息列表
-        connected_ios_device_list = get_connected_ios_devices_info(pro_name)
-        if len(connected_ios_device_list) == 0:
-            send_DD_for_FXC(title=pro_name, text="#### '" + pro_name + "' 项目 未连接任何 iOS 设备")
-            return "Done"
+    connected_ios_device_list = [{'device_name': 'iPhone 8(模拟器)', 'platform_version': '13.4', 'device_udid': '647616B3-44E3-4198-8578-E22FFD8EE43D', 'wda_port': '8100', 'wda_destination': 'platform=iOS Simulator,name=iPhone 8', 'appium_server': '127.0.0.1:4723/wd/hub', 'thread_index': 1}]
+                                 # {'device_name': 'iPhone 11(模拟器)', 'platform_version': '13.4', 'device_udid': '5F302EEC-C5AA-489D-924D-45FB91C9C894', 'wda_port': '8200', 'wda_destination': 'platform=iOS Simulator,name=iPhone 11', 'appium_server': '127.0.0.1:4733/wd/hub', 'thread_index': 2}]
 
     # '已连接设备的' 列表数量 作为 线程数量
     log.info("线程数量 ： " + str(len(connected_ios_device_list)))
