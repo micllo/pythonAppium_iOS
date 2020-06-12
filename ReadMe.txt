@@ -13,9 +13,6 @@
 （5）config_ios_device_list     配置'iOS'设备信息列表
 
 
-【 未 解 决 的 问 题 】
-
-
 【 关于 本地 gulp 部 署 前 的 注 意 事 项 】
 1.在通过'xcodebuile'命令启动WDA服务前，需要先通过'XCode'工具手动启动'WebDriverAgent'项目，并确认是否能正常启动（ 模拟器、真机 ）
 
@@ -122,12 +119,18 @@ sudo nginx -s reload
 
 
 【 启 动 多 个 WDA 服 务 的 方 法 】
-1.创建两个 WebDriverAgent 项目
+1.创建两个 WebDriverAgent 项目，并通过Xcode进行配置调试成功
 （1）../WDA_iOS/8100/WebDriverAgent/WebDriverAgent.xcodeproj
 （2）../WDA_iOS/8200/WebDriverAgent/WebDriverAgent.xcodeproj
-2.通过Xcode进行配置调试成功
-3.进入第二个项目，将8100端口改成8200，然后保存（ 搜索"8100"，可找到两处）
-4.通过 xcodebuild 命令，分别将两个项目安装入对应的设备中，并启动相应的监听端口：8100、8200
+2.进入第二个项目，将8100端口改成8200，然后保存（ 搜索"8100"，可找到两处）
+3.通过 xcodebuild 命令，分别将两个项目安装入对应的设备中，并启动相应的监听端口：8100、8200
+
+
+【 Appium 框 架 多 线 程 并 发 处 理 方 式 】
+1.创建多个 WebDriverAgent 项目，并将他们默认的端口号设置成不一样：8100、8200、8300，并通过Xcode将它们分别配置调式成功
+2.通过xcodebuild命令 分别将不同端口的 WebDriverAgent 安装在不同的设备上，并启动WDA监控服务
+3.启动多个 Appium 服务 对应不同的 WDA服务 监听端口（ 目的：使一个Appium服务 绑定 一个WDA服务，即 绑定一个设备 ）
+4.先通过'ps aux'命令查看'WebDriverAgentRunner'服务连接的iOS设备情况 和 'Appium'服务对应的WDA监听端口情况，再将'已连接'的设备列表数量 作为 并发线程数量
 
 
 -----------------------------------------------

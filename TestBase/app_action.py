@@ -132,13 +132,13 @@ class Base(object):
         self.driver.quit()
 
     # 判断页面内容是否存在
-    def content_is_exist(self, content, time_out):
+    def content_is_exist(self, content):
         time_init = 1   # 初始化时间
         polling_interval = 1  # 轮询间隔时间
         while content not in self.driver.page_source:
             time.sleep(polling_interval)
             time_init = time_init + 1
-            if time_init >= time_out:
+            if time_init >= gv.POLLING_CONTENT_TIME_OUT:
                 return False
         return True
 
