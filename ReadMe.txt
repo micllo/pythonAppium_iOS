@@ -116,6 +116,8 @@ sudo nginx -s reload
   < 备 注 >
    --port ：指 Appium 服务的监听端口
    --webdriveragent-port ：指 iOS 设备的 WDA 服务监听端口
+  < 注 意 >
+    若使用真机：则不能启动端口映射（Appium 自动会将真机的端口映射到Mac上）
 
 
 【 启 动 多 个 WDA 服 务 的 方 法 】
@@ -272,11 +274,11 @@ pip3 install -v flask==0.12 -i http://mirrors.aliyun.com/pypi/simple/ --trusted-
     ( 备注：uwgsi 启动 8081 端口、nginx 配置 80 反向代理 8081 )
 
 7.访问地址（ 外部访问 ）：
-（1）用例页面 -> http://192.168.31.10:1080/api/iOS/index
-（2）测试报告 -> http://192.168.31.10:1080/test_report/<pro_name>/[iOS_report]<pro_name>.html
-（3）接口地址 -> http://192.168.31.10:1080/api/
-               http://192.168.31.10:1080/api/iOS/sync_run_case
-               http://192.168.31.10:1080/api/iOS/get_img/5e5cac9188121299450740b3
+（1）用例页面 -> http://192.168.31.9:1080/api/iOS/index
+（2）测试报告 -> http://192.168.31.9:1080/test_report/<pro_name>/[iOS_report]<pro_name>.html
+（3）接口地址 -> http://192.168.31.9:1080/api/
+               http://192.168.31.9:1080/api/iOS/sync_run_case
+               http://192.168.31.9:1080/api/iOS/get_img/5e5cac9188121299450740b3
     ( 备注：docker 配置 1080 映射 80 )
 
 8.关于部署

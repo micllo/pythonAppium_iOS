@@ -63,11 +63,11 @@ def get_ios_driver(pro_name, current_thread_name_index, connected_ios_device_lis
         elif "Unable to launch WebDriverAgent because of xcodebuild failure" in str(e):
             error_msg = pro_name + " 项目 " + device_name + " 设备 启动 WDA 服务 失败"
         elif "App with bundle identifier" in str(e):
-            error_msg = pro_name + " 项目 " + "应 用 的 bundleId 设 置 有 误"
+            error_msg = pro_name + " 项目 应 用 的 bundleId 设 置 有 误"
         elif "Failed to launch Appium Settings app" in str(e):
-            error_msg = pro_name + " 项目 " + "Appium Setting 应用启动超时"
+            error_msg = pro_name + " 项目 Appium Setting 应用启动超时"
         else:
-            error_msg = pro_name + " 项目 " + "启动 Appium 服务的其他异常情况"
+            error_msg = pro_name + " 项目 启动 Appium 服务的其他异常情况"
         send_DD_for_FXC(title=pro_name, text="#### " + error_msg + "")
         raise Exception(error_msg)
     finally:
@@ -87,28 +87,6 @@ class Base(object):
             return self.driver.find_element_by_ios_predicate(*args)
         except Exception:
             raise Exception("元素定位失败！")
-
-    def find_ele_by_text(self, content):
-        """
-        通过text找到元素（唯一）
-        :param content:
-        :return:
-        """
-        try:
-            return self.driver.find_element_by_android_uiautomator('new UiSelector().text("' + content + '")')
-        except Exception:
-            raise Exception("text = \"" + content + "\" 的元素未找到")
-
-    def find_eles_by_text(self, content):
-        """
-        通过text找到元素（多个）
-        :param content:
-        :return:
-        """
-        try:
-            return self.driver.find_elements_by_android_uiautomator('new UiSelector().text("' + content + '")')
-        except Exception:
-            raise Exception("text = \"" + content + "\" 的元素未找到")
 
     def click(self, *args):
         self.find_ele(*args).click()

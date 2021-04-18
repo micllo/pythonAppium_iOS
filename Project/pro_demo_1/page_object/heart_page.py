@@ -74,7 +74,7 @@ class AddPage(Base):
         Speed up your typing by sliding your finger across the letters to compose a word
         :return:
         """
-        if self.content_is_exist("Speed up your typing by sliding your finger across", 2.0):
+        if self.content_is_exist("Speed up your typing by sliding your finger across"):
             self.continue_btn().click()
 
     def iphone7_flow(self):
@@ -150,12 +150,12 @@ class AddPage(Base):
             self.screenshot(image_name="heart_66_rate_3.png")
 
             # 判断"Nutrition"内容是否存在
-            is_not_exist = self.content_is_exist("Nutrition", 4.0)
+            is_not_exist = self.content_is_exist("Nutrition")
             self.log.info("内容 Nutrition 是否存在: " + str(is_not_exist))
             time.sleep(2)
 
             # 判断"Heart Rate"内容是否存在
-            is_exist = self.content_is_exist("Heart Rate", 5.0)
+            is_exist = self.content_is_exist("Heart Rate")
             self.log.info("内容 Heart Rate 是否存在: " + str(is_exist))
             time.sleep(2)
 
