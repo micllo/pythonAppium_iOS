@@ -18,8 +18,8 @@ NGINX_API_PROXY = "api_local"
 # 测试报告路径
 REPORT_PATH = "/test_report_local/"
 
-# Mongo 端口
-MONGO_PORT = "27017"
+# Mongo 地址
+MONGODB_ADDR = SERVER_IP + ":27017"
 
 
 ############################################# 相 同 的 配 置 #############################################
@@ -42,7 +42,6 @@ API_ADDR = SERVER_IP + ":" + NGINX_PORT + "/" + NGINX_API_PROXY
 BASE_REPORT_PATH = "http://" + SERVER_IP + ":" + NGINX_PORT + REPORT_PATH
 
 # mongo 数据库
-MONGODB_ADDR = SERVER_IP + ":" + MONGO_PORT
 MONGODB_DATABASE = "app_auto_test_appium_iOS"
 
 # 构建的时候使用前端静态文件路径 ( Api/__init__.py文件的同级目录 ) 'static'、'templates'

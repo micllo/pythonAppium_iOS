@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from fabric.api import *
 from Common.com_func import mkdir
+from Env import env_config_docker as cfg
 import time
 
 
 # 设置变量
-host = "127.0.0.1"
+host = cfg.SERVER_IP
 port = "1522"
 user = "centos"
 passwd = "centos"
@@ -63,7 +64,7 @@ def server_action():
         # 停止'nginx、uwsgi、mongo'服务
         run("sh /home/centos/stop_nginx.sh", warn_only=True)  # 忽略失败的命令,继续执行
         run("sh /home/centos/stop_uwsgi.sh", warn_only=True)
-        run("pgrep mongod | sudo xargs kill -9", warn_only=True)
+        # run("pgrep mongod | sudo xargs kill -9", warn_only=True)
         run("pwd")
         # 解压'部署文件'
         run("tar -xzvf " + remote_tmp_path + pro_name_tar + " -C " + remote_tmp_path, warn_only=True)
@@ -78,7 +79,7 @@ def server_action():
             run("rm -r env_config.py && mv env_config_docker.py env_config.py", warn_only=True)
 
         # 启动'mongo、nginx、uwsgi'服务
-        run("sudo mongod -f /tools/mongodb/bin/mongodb.conf", warn_only=False)  # 不忽略失败的命令，不能继续执行
+        # run("sudo mongod -f /tools/mongodb/bin/mongodb.conf", warn_only=False)  # 不忽略失败的命令，不能继续执行
         run("sh /home/centos/start_nginx.sh", warn_only=False)
         run("sh /home/centos/start_uwsgi.sh", warn_only=False, pty=False)  # 参数pty：解决'fabric'执行'nohub'的问题
 
